@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_public_layout :: layout(
+        pageTitle='ログイン',
+        content=~{::section}
+      )}">
+
+<section>
+  <h1>ログイン</h1>
+
+  <!-- 認証エラーなどのメッセージ -->
+  <div th:if="${errorMessage}">
+    <p th:text="${errorMessage}" style="color:red;"></p>
+  </div>
+
+  <form th:action="@{/user/login}" th:object="${userLoginForm}" method="post">
+
+    <!-- バリデーションエラー一覧（フォーム内で #fields を使う） -->
+    <div th:if="${#fields.hasErrors()}">
+      <ul>
+        <li th:each="err : ${#fields.errors()}" th:text="${err}"></li>
+      </ul>
+    </div>
+
+    <div>
+      <label>ログインID：
+        <input type="text" th:field="*{loginId}" autocomplete="username">
+      </label>
+      <div th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
+    </div>
+
+    <div>
+      <label>パスワード：
+        <input type="password" th:field="*{password}" autocomplete="current-password">
+      </label>
+      <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+    </div>
+
+    <button type="submit" class="el-btn">
+      <span class="el-btn__icon" aria-hidden="true">→</span>
+      <span>ログイン</span>
+    </button>
+  </form>
+
+  <!-- 切替導線（ログイン選択画面は廃止想定のため直リンク） -->
+  <p style="margin-top: 12px;">
+    <a th:href="@{/admin/login}">管理者ログインはこちら</a>
+  </p>
+</section>
+
+</html>
