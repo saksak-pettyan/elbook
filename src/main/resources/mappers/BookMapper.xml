@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kaneko.elbook.mapper.BookMapper">
+
+	<!-- T_BOOK → Book ドメインクラスへのマッピング定義 -->
+	<resultMap id="BookResultMap" type="com.kaneko.elbook.domain.Book">
+		<id property="bookId" column="BOOK_ID" />
+		<result property="title" column="TITLE" />
+		<result property="author" column="AUTHOR" />
+		<result property="location" column="LOCATION" />
+		<result property="totalCount" column="TOTAL_COUNT" />
+		<result property="stockCount" column="STOCK_COUNT" />
+		<result property="rentalCount" column="RENTAL_COUNT" />
+	</resultMap>
+
+	<!-- 1. 全件取得（初期表示） -->
+	<select id="findAll" resultMap="BookResultMap">
+		SELECT
+		BOOK_ID,
+		TITLE,
+		AUTHOR,
+		LOCATION,
+		TOTAL_COUNT,
+		STOCK_COUNT,
+		RENTAL_COUNT
+		FROM
+		T_BOOK
+		ORDER BY
+		BOOK_ID
+	</select>
+
+	<!-- 2. タイトル部分一致検索 -->
+	<select id="findByTitleLike" resultMap="BookResultMap">
+		SELECT
+		BOOK_ID,
+		TITLE,
+		AUTHOR,
+		LOCATION,
+		TOTAL_COUNT,
+		STOCK_COUNT,
+		RENTAL_COUNT
+		FROM
+		T_BOOK
+		WHERE
+		TITLE LIKE CONCAT('%', #{title}, '%')
+		ORDER BY
+		BOOK_ID
+	</select>
+
+	<!-- 詳細：主キーで1件取得 -->
+	<select id="findById" resultMap="BookResultMap">
+		SELECT
+		BOOK_ID,
+		TITLE,
+		AUTHOR,
+		LOCATION,
+		TOTAL_COUNT,
+		STOCK_COUNT,
+		RENTAL_COUNT
+		FROM
+		T_BOOK
+		WHERE
+		BOOK_ID = #{bookId}
+	</select>
+
+	<!-- 新規登録 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="bookId">
+		INSERT INTO T_BOOK (
+		TITLE,
+		AUTHOR,
+		LOCATION,
+		TOTAL_COUNT,
+		STOCK_COUNT,
+		RENTAL_COUNT
+		)
+		VALUES (
+		#{title},
+		#{author},
+		#{location},
+		#{totalCount},
+		#{stockCount},
+		#{rentalCount}
+		)
+	</insert>
+
+	<!-- 更新 -->
+	<update id="update">
+  UPDATE
+    T_BOOK
+  SET
+    TITLE = #{title},
+    AUTHOR = #{author},
+    LOCATION = #{location},
+    TOTAL_COUNT = #{totalCount},
+    STOCK_COUNT = (#{totalCount} - RENTAL_COUNT)
+  WHERE
+    BOOK_ID = #{bookId}
+    AND RENTAL_COUNT &lt;= #{totalCount}
+</update>
+
+
+	<!-- 貸出：在庫がある場合のみ更新 -->
+	<update id="rentBook">
+		UPDATE T_BOOK
+		SET
+		STOCK_COUNT = STOCK_COUNT - 1,
+		RENTAL_COUNT = RENTAL_COUNT + 1
+		WHERE BOOK_ID = #{bookId}
+		AND STOCK_COUNT >= 1
+	</update>
+
+	<!-- 返却：貸出冊数がある場合のみ更新 -->
+	<update id="returnBook">
+		UPDATE T_BOOK
+		SET
+		STOCK_COUNT = STOCK_COUNT + 1,
+		RENTAL_COUNT = RENTAL_COUNT - 1
+		WHERE BOOK_ID = #{bookId}
+		AND RENTAL_COUNT >= 1
+	</update>
+
+</mapper>
