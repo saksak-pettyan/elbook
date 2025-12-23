@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(pageTitle, content)">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" th:href="@{/css/elbook.css}">
+	<title th:text="${pageTitle}">ELBOOK</title>
+</head>
+
+<body class="public-body">
+	<header class="app-header">
+		<div class="app-title">ELBOOK</div>
+	</header>
+
+	<main class="public-main">
+		<div th:replace="${content}">
+			<!-- content -->
+		</div>
+	</main>
+</body>
+
+</html>

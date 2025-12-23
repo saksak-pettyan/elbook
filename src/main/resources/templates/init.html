@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_public_layout :: layout(
+        pageTitle='初期設定',
+        content=~{::section}
+      )}">
+
+<section>
+	<h1>初期設定（管理者パスワード登録）</h1>
+
+	<p class="el-msg el-msg--error" th:if="${error}" th:text="${error}"></p>
+
+	<form th:action="@{/init}" method="post">
+		<div>
+			<label for="adminPassword">パスワード:</label>
+			<input type="password" id="adminPassword" name="adminPassword" autocomplete="new-password">
+		</div>
+
+		<div>
+			<label for="adminPasswordConfirm">パスワード（確認）:</label>
+			<input type="password" id="adminPasswordConfirm" name="adminPasswordConfirm" autocomplete="new-password">
+		</div>
+
+		<div class="el-mt-16">
+			<button type="submit" class="el-btn">
+				<span class="el-btn__icon" aria-hidden="true">→</span>
+				<span>登録</span>
+			</button>
+		</div>
+	</form>
+</section>
+
+</html>
